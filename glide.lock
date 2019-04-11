@@ -1,5 +1,5 @@
-hash: 8162f122d3292212b350d79213d03b50a99d18915f87c68bd7b5e4023140e40d
-updated: 2019-04-10T10:35:39.973616789+05:30
+hash: 1dca9738f2435b9cfb38f0fa8607070f63eea5e9d8ecadf0108910d4830c7a78
+updated: 2019-04-12T02:16:14.967568541+05:30
 imports:
 - name: github.com/dgrijalva/jwt-go
   version: 3af4c746e1c248ee8491a3e0c6f7a9cd831e95f8
@@ -99,6 +99,7 @@ imports:
 - name: golang.org/x/crypto
   version: a8fb68e7206f8c78be19b432c58eb52a6aa34462
   subpackages:
+  - bcrypt
   - pbkdf2
 - name: golang.org/x/sync
   version: e225da77a7e68af35c70ccbf71af2b83e6acac3c

@@ -15,8 +15,8 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-oauth2/gin-server"
-	"github.com/letsGo/controllers"
-	"github.com/letsGo/helpers"
+	"github.com/posts-api/controllers"
+	"github.com/posts-api/helpers"
 )
 
 func PaveRoutes() *gin.Engine {
@@ -41,6 +41,8 @@ func PaveRoutes() *gin.Engine {
 	v1 := r.Group("/api/v1")
 	{
 		v1.GET("/", controllers.Home)
+		v1.POST("/register", controllers.Register)
+		v1.POST("/login", controllers.Login)
 		v1.GET("/credentials", controllers.GetCredentials)
 		v1.GET("/token", controllers.GetToken)
 		auth := v1.Group("auth")
