@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	ginserver "github.com/go-oauth2/gin-server"
 	"github.com/posts-api/database"
@@ -10,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"gopkg.in/oauth2.v3/models"
 	"log"
+	"time"
 )
 
 func Post (c *gin.Context) {
@@ -20,8 +22,20 @@ func Post (c *gin.Context) {
 	ti, _ := c.Get(ginserver.DefaultConfig.TokenKey)
 	token := ti.(*models.Token)
 
-	post.Poster, _ = primitive.ObjectIDFromHex(token.UserID)
+	userCollection := database.DB.Collection("users")
+	user := types.User{}
+	err = userCollection.FindOne(context.Background(), bson.M{"email": token.ClientID}).Decode(&user)
+	fmt.Printf("%+v",token)
+	fmt.Printf("%+v",user)
+
+	if err != nil {
+		log.Println(err)
+		c.Abort()
+	}
+
+	post.Poster = user
 	post.Id = primitive.NewObjectID()
+	post.PostedAt = time.Now().String()
 
 	_, err = collection.InsertOne(ctx, post)
 	if err != nil {
