@@ -17,6 +17,7 @@ import (
 	"github.com/go-oauth2/gin-server"
 	"github.com/posts-api/controllers"
 	"github.com/posts-api/helpers"
+	"github.com/posts-api/middlewares"
 )
 
 func PaveRoutes() *gin.Engine {
@@ -48,7 +49,10 @@ func PaveRoutes() *gin.Engine {
 		auth := v1.Group("auth")
 		{
 			auth.Use(ginserver.HandleTokenVerify(config))
+			auth.Use(middlewares.AuthMiddleware())
 			auth.GET("/", controllers.Verify)
+			auth.GET("post", controllers.Posts)
+			auth.POST("post", controllers.Post)
 		}
 
 		// websocket route

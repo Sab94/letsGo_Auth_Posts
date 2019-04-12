@@ -16,6 +16,7 @@ import (
 	"github.com/go-oauth2/gin-server"
 	"github.com/google/uuid"
 	"github.com/posts-api/database"
+	"github.com/posts-api/helpers"
 	"github.com/posts-api/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -108,12 +109,16 @@ func Login (c *gin.Context) {
 
 	if loginError != nil {
 		log.Println(err)
-		c.Abort()
+		c.JSON(helpers.ErrorMessage(err, types.ErrLogin))
 	}
 
-	clientId, clientSecret := getCredentialsForLogin(user.Email, user.Password)
+	clientId, clientSecret := getCredentialsForLogin(user.Id, user.Email, user.Password)
 
-	c.JSON(200, map[string]string{"CLIENT_ID": clientId, "CLIENT_SECRET": clientSecret})
+	res := types.LoginResponse{}
+	res.CLIENT_ID = clientId
+	res.CLIENT_SECRET = clientSecret
+	res.User = user
+	c.JSON(200, res)
 	c.Done()
 }
 
@@ -133,19 +138,19 @@ func Generate(s string) (string, error) {
 func Compare(hash string, s string) error {
 	incoming := []byte(s)
 	existing := []byte(hash)
+
 	return bcrypt.CompareHashAndPassword(existing, incoming)
 }
 
-func getCredentialsForLogin (id string, secret string) (string, string) {
-	clientId := id
-	clientSecret := secret
-	err := clientStore.Set(clientId, &models.Client{
-		ID:     clientId,
-		Secret: clientSecret,
+func getCredentialsForLogin (user_id primitive.ObjectID, client_id string, client_secret string) (string, string) {
+	err := clientStore.Set(client_id, &models.Client{
+		ID:     client_id,
+		Secret: client_secret,
 		Domain: "http://localhost:8000",
+		UserID: user_id.String(),
 	})
 	if err != nil {
 		fmt.Println(err.Error())
 	}
-	return clientId, clientSecret
+	return client_id, client_secret
 }
