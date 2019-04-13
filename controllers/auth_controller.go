@@ -110,16 +110,19 @@ func Login (c *gin.Context) {
 	if loginError != nil {
 		log.Println(err)
 		c.JSON(helpers.ErrorMessage(err, types.ErrLogin))
+		c.Done()
+	} else {
+		clientId, clientSecret := getCredentialsForLogin(user.Id, user.Email, user.Password)
+
+		res := types.LoginResponse{}
+		res.CLIENT_ID = clientId
+		res.CLIENT_SECRET = clientSecret
+		res.User = user
+		c.JSON(200, res)
+		c.Done()
 	}
 
-	clientId, clientSecret := getCredentialsForLogin(user.Id, user.Email, user.Password)
 
-	res := types.LoginResponse{}
-	res.CLIENT_ID = clientId
-	res.CLIENT_SECRET = clientSecret
-	res.User = user
-	c.JSON(200, res)
-	c.Done()
 }
 
 //Generate a salted hash for the input string

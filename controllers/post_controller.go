@@ -9,6 +9,7 @@ import (
 	"github.com/posts-api/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"gopkg.in/oauth2.v3/models"
 	"log"
 	"time"
@@ -50,7 +51,17 @@ func Posts(c *gin.Context) {
 	last100 := []types.Post{}
 	ctx := context.Background()
 	collection := database.DB.Collection("post")
-	cur, err := collection.Find(context.Background(), bson.D{})
+
+	_options := options.FindOptions{}
+
+	// Sort by `_id` field descending
+	_options.Sort = bson.D{{"_id", -1}}
+
+	// Limit by 100 documents only
+	limit := int64(100)
+	_options.Limit = &limit
+
+	cur, err := collection.Find(context.Background(), bson.D{}, &_options)
 
 	if err != nil { log.Fatal(err) }
 	defer cur.Close(ctx)
