@@ -30,6 +30,19 @@ import (
 var clientStore = store.NewClientStore()
 var manager = manage.NewDefaultManager()
 
+func AuthInit() {
+	manager.SetAuthorizeCodeTokenCfg(manage.DefaultAuthorizeCodeTokenCfg)
+
+	// token memory store
+	manager.MustTokenStorage(store.NewMemoryTokenStore())
+
+	manager.MapClientStorage(clientStore)
+
+	ginserver.InitServer(manager)
+	ginserver.SetAllowGetAccessRequest(true)
+	ginserver.SetClientInfoHandler(server.ClientFormHandler)
+}
+
 func GetCredentials(c *gin.Context) {
 	clientId := uuid.New().String()
 	clientSecret := uuid.New().String()
@@ -46,19 +59,6 @@ func GetCredentials(c *gin.Context) {
 }
 
 func GetToken(c *gin.Context) {
-
-	manager.SetAuthorizeCodeTokenCfg(manage.DefaultAuthorizeCodeTokenCfg)
-
-	// token memory store
-	manager.MustTokenStorage(store.NewMemoryTokenStore())
-
-	manager.MapClientStorage(clientStore)
-
-	ginserver.InitServer(manager)
-	ginserver.SetAllowGetAccessRequest(true)
-	ginserver.SetClientInfoHandler(server.ClientFormHandler)
-
-
 	ginserver.HandleTokenRequest(c)
 }
 
@@ -149,7 +149,6 @@ func getCredentialsForLogin (user_id primitive.ObjectID, client_id string, clien
 	err := clientStore.Set(client_id, &models.Client{
 		ID:     client_id,
 		Secret: client_secret,
-		Domain: "http://localhost:8000",
 		UserID: user_id.String(),
 	})
 	if err != nil {

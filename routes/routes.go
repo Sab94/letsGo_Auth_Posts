@@ -38,6 +38,9 @@ func PaveRoutes() *gin.Engine {
 			return false
 		},
 	}
+
+	controllers.AuthInit()
+
 	// Grouped api
 	v1 := r.Group("/api/v1")
 	{
