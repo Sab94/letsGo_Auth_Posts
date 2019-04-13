@@ -56,6 +56,7 @@ func PaveRoutes() *gin.Engine {
 			auth.GET("/", controllers.Verify)
 			auth.GET("post", controllers.Posts)
 			auth.POST("post", controllers.Post)
+			auth.GET("/whoami", controllers.WhoAmI)
 		}
 
 		// websocket route

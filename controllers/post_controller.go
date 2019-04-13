@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	ginserver "github.com/go-oauth2/gin-server"
 	"github.com/posts-api/database"
@@ -26,8 +25,6 @@ func Post (c *gin.Context) {
 	userCollection := database.DB.Collection("users")
 	user := types.User{}
 	err = userCollection.FindOne(context.Background(), bson.M{"email": token.ClientID}).Decode(&user)
-	fmt.Printf("%+v",token)
-	fmt.Printf("%+v",user)
 
 	if err != nil {
 		log.Println(err)
