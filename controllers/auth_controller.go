@@ -78,6 +78,8 @@ func Register (c *gin.Context) {
 	err := c.BindJSON(&a)
 	a.Password,_ = Generate(a.Password)
 	a.Id = primitive.NewObjectID()
+	a.Following = []*types.User{}
+
 
 	if err != nil {
 		log.Println(err)

@@ -60,14 +60,29 @@ func Posts(c *gin.Context) {
 
 	cur, err := collection.Find(context.Background(), bson.D{}, &_options)
 
+	ti, _ := c.Get(ginserver.DefaultConfig.TokenKey)
+	token := ti.(*models.Token)
+
+	userCollection := database.DB.Collection("users")
+	user := types.User{}
+	err = userCollection.FindOne(context.Background(), bson.M{"email": token.ClientID}).Decode(&user)
+
+
+
 	if err != nil { log.Fatal(err) }
 	defer cur.Close(ctx)
 	for cur.Next(ctx) {
 		result := types.Post{}
 		err := cur.Decode(&result)
-		last100 = append(last100, result)
+		if result.Poster.Id == user.Id {
+			last100 = append(last100, result)
+		}
+		for _, f := range user.Following {
+			if result.Poster.Id == f.Id {
+				last100 = append(last100, result)
+			}
+		}
 		if err != nil { log.Fatal(err) }
-		// do something with result....
 	}
 	if err := cur.Err(); err != nil {
 		log.Fatal(err)
