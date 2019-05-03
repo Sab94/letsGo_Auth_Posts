@@ -1,5 +1,5 @@
-hash: 1dca9738f2435b9cfb38f0fa8607070f63eea5e9d8ecadf0108910d4830c7a78
-updated: 2019-04-12T02:16:14.967568541+05:30
+hash: 96c4125d84d1ca261da59b242693b2be65c9e63cb24d84c0ac18c9759ee895d7
+updated: 2019-05-02T13:19:18.322006296+05:30
 imports:
 - name: github.com/dgrijalva/jwt-go
   version: 3af4c746e1c248ee8491a3e0c6f7a9cd831e95f8
@@ -27,6 +27,21 @@ imports:
   version: 0cd6bf5da1e1c83f8b45653022c74f71af0538a4
 - name: github.com/gorilla/websocket
   version: 66b9c49e59c6c48f0ffce28c2d8b8a5678502c6d
+- name: github.com/graphql-go/graphql
+  version: 2b0b7340d2285b861482047fbf5de0488e021bea
+  subpackages:
+  - gqlerrors
+  - language/ast
+  - language/kinds
+  - language/lexer
+  - language/location
+  - language/parser
+  - language/printer
+  - language/source
+  - language/typeInfo
+  - language/visitor
+- name: github.com/graphql-go/handler
+  version: c1267356e6539d975e83bbea383c2bbb861dce5b
 - name: github.com/joho/godotenv
   version: 23d116af351c84513e1946b527c88823e476be13
 - name: github.com/json-iterator/go
@@ -64,7 +79,7 @@ imports:
 - name: github.com/xdg/stringprep
   version: 73f8eece6fdcd902c185bf651de50f3828bed5ed
 - name: go.mongodb.org/mongo-driver
-  version: 1c3b9b9a41eecdf056560e07b68e6407b8d598c3
+  version: fd38aea397a6b7fdd52b5528e4cfd683821e7b39
   subpackages:
   - bson
   - bson/bsoncodec
@@ -100,6 +115,7 @@ imports:
   version: a8fb68e7206f8c78be19b432c58eb52a6aa34462
   subpackages:
   - bcrypt
+  - blowfish
   - pbkdf2
 - name: golang.org/x/sync
   version: e225da77a7e68af35c70ccbf71af2b83e6acac3c

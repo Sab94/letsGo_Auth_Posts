@@ -19,3 +19,7 @@ import:
 - package: golang.org/x/crypto
   subpackages:
   - bcrypt
+- package: github.com/graphql-go/handler
+  version: ~0.2.3
+- package: github.com/graphql-go/graphql
+  version: ~0.7.8

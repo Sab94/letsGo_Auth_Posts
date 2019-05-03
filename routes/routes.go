@@ -15,9 +15,13 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-oauth2/gin-server"
+	"github.com/graphql-go/graphql"
+	"github.com/graphql-go/handler"
 	"github.com/posts-api/controllers"
 	"github.com/posts-api/helpers"
 	"github.com/posts-api/middlewares"
+	"github.com/posts-api/queries"
+	"log"
 )
 
 func PaveRoutes() *gin.Engine {
@@ -40,6 +44,28 @@ func PaveRoutes() *gin.Engine {
 	}
 
 	controllers.AuthInit()
+
+	schemaConfig := graphql.SchemaConfig{Query: queries.RootQuery}
+	schema, err := graphql.NewSchema(schemaConfig)
+	if err != nil {
+		log.Fatalf("failed to create new schema, error: %v", err)
+	}
+	h := handler.New(&handler.Config{
+		Schema:     &schema,
+		Pretty:     true,
+		GraphiQL:   true,
+		Playground: true,
+	})
+
+	g := r.Group("/graphql")
+	{
+		g.POST("/", func(c *gin.Context) {
+			h.ServeHTTP(c.Writer, c.Request)
+		})
+		g.GET("/", func(c *gin.Context) {
+			h.ServeHTTP(c.Writer, c.Request)
+		})
+	}
 
 	// Grouped api
 	v1 := r.Group("/api/v1")
