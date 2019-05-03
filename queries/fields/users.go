@@ -15,6 +15,14 @@ import (
 
 var Users = &graphql.Field{
 	Type: graphql.NewList(types.UserGQLObj),
+	Args: graphql.FieldConfigArgument{
+		"email": &graphql.ArgumentConfig{
+			Type: graphql.String,
+		},
+		"id": &graphql.ArgumentConfig{
+			Type: graphql.String,
+		},
+	},
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 		userCollection := database.DB.Collection("users")
 		_options := options.FindOptions{}
@@ -25,6 +33,10 @@ var Users = &graphql.Field{
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		email, emailOk := p.Args["email"].(string)
+		id, idOk := p.Args["id"].(string)
+
 		usersGql:= []types.User{}
 		for users.Next(context.Background()) {
 			result := types.User{}
@@ -44,13 +56,28 @@ var Users = &graphql.Field{
 				case "name":
 					user.Name = fmt.Sprintf("%v",value)
 				case "email":
-					user.Email= fmt.Sprintf("%v",value)
+					user.Email = fmt.Sprintf("%v",value)
 				case "id":
-					user.Id, _= primitive.ObjectIDFromHex(fmt.Sprintf("%v",value))
+					user.Id, _ = primitive.ObjectIDFromHex(fmt.Sprintf("%v",value))
 				default:
 				}
 			}
-			usersGql = append(usersGql, user)
+			objectId, _ := primitive.ObjectIDFromHex(fmt.Sprintf("%v",id))
+			if emailOk && idOk {
+				if email == user.Email && objectId == user.Id {
+					usersGql = append(usersGql, user)
+				}
+			} else if emailOk {
+				if email == user.Email {
+					usersGql = append(usersGql, user)
+				}
+			} else if idOk {
+				if objectId == user.Id {
+					usersGql = append(usersGql, user)
+				}
+			} else {
+				usersGql = append(usersGql, user)
+			}
 		}
 
 		return usersGql, nil
